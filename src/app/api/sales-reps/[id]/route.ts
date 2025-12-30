@@ -16,7 +16,7 @@ export async function GET(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const rep = await prisma.salesRep.findFirst({
       where: {
@@ -98,10 +98,14 @@ export async function PATCH(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     // Only admins/owners can update sales reps
-    if (user.role !== 'owner' && user.role !== 'admin') {
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    })
+    if (currentUser?.role !== 'owner' && currentUser?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Only admins can update sales reps' },
         { status: 403 }
@@ -178,10 +182,14 @@ export async function DELETE(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     // Only admins/owners can delete sales reps
-    if (user.role !== 'owner' && user.role !== 'admin') {
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    })
+    if (currentUser?.role !== 'owner' && currentUser?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Only admins can delete sales reps' },
         { status: 403 }

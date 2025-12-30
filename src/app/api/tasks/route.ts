@@ -17,7 +17,7 @@ const createTaskSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Check CRM module license (tasks are part of CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const searchParams = request.nextUrl.searchParams
     const page = parseInt(searchParams.get('page') || '1')
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check CRM module license (tasks are part of CRM)
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = createTaskSchema.parse(body)

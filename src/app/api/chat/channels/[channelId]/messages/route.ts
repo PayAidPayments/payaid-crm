@@ -128,7 +128,7 @@ export async function POST(
 ) {
   try {
     // Check CRM module license (chat is part of team communication/CRM)
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
     
     // Get user info
     const user = await prisma.user.findUnique({

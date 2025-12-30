@@ -20,7 +20,7 @@ export async function GET(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const event = await prisma.event.findFirst({
       where: {
@@ -62,7 +62,7 @@ export async function PATCH(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = updateEventSchema.parse(body)

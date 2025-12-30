@@ -19,7 +19,7 @@ const leadRowSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const formData = await request.formData()
     const file = formData.get('file') as File
@@ -89,6 +89,7 @@ export async function POST(request: NextRequest) {
         const newSource = await prisma.leadSource.create({
           data: {
             name: 'Bulk Import',
+            type: 'other',
             tenantId: tenantId,
           },
         })

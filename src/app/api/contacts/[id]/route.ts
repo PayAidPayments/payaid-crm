@@ -29,7 +29,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const contact = await prisma.contact.findFirst({
       where: {
@@ -84,7 +84,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = updateContactSchema.parse(body)
@@ -127,7 +127,7 @@ export async function PATCH(
     })
 
     // Invalidate cache
-    await cache.deletePattern(`contacts:${user.tenantId}:*`)
+    await cache.deletePattern(`contacts:${tenantId}:*`)
     await cache.delete(`contact:${params.id}`)
 
     return NextResponse.json(contact)
@@ -153,7 +153,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     // Check if contact exists and belongs to tenant
     const existing = await prisma.contact.findFirst({
@@ -175,7 +175,7 @@ export async function DELETE(
     })
 
     // Invalidate cache
-    await cache.deletePattern(`contacts:${user.tenantId}:*`)
+    await cache.deletePattern(`contacts:${tenantId}:*`)
     await cache.delete(`contact:${params.id}`)
 
     return NextResponse.json({ success: true })

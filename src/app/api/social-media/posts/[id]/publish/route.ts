@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const post = await prisma.socialPost.findFirst({
       where: {

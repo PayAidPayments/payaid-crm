@@ -21,7 +21,7 @@ const createChatbotSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const chatbots = await prisma.websiteChatbot.findMany({
       where: {
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = createChatbotSchema.parse(body)

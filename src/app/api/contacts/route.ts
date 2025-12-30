@@ -26,7 +26,7 @@ const createContactSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Check CRM module license
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const searchParams = request.nextUrl.searchParams
     const page = parseInt(searchParams.get('page') || '1')
@@ -266,7 +266,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check CRM module license
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     // Check tenant limits
     const canCreate = await checkTenantLimits(tenantId, 'contacts')

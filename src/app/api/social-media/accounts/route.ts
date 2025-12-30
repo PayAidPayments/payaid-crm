@@ -6,7 +6,7 @@ import { requireModuleAccess, handleLicenseError } from '@/lib/middleware/auth'
 export async function GET(request: NextRequest) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const accounts = await prisma.socialMediaAccount.findMany({
       where: {
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const { platform, accountName, accountId, accessToken, refreshToken, expiresAt } = body

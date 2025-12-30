@@ -8,7 +8,7 @@ import { requireModuleAccess, handleLicenseError } from '@/lib/middleware/auth'
 export async function GET(request: NextRequest) {
   try {
     // Check CRM module license
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     // Test 1: Basic database connection
     let connectionTest

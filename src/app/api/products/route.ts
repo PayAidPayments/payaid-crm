@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@payaid/db'
-import { authenticateRequest } from '@/lib/middleware/auth'
+import { authenticateRequest, requireModuleAccess, handleLicenseError } from '@/lib/middleware/auth'
 import { cache } from '@/lib/redis/client'
 import { z } from 'zod'
 
@@ -27,7 +27,7 @@ const createProductSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Check CRM module license (products are part of sales/CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const searchParams = request.nextUrl.searchParams
     const page = parseInt(searchParams.get('page') || '1')
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check CRM module license (products are part of sales/CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = createProductSchema.parse(body)

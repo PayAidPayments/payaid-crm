@@ -20,7 +20,7 @@ export async function GET(
 ) {
   try {
     // Check CRM module license
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const deal = await prisma.deal.findFirst({
       where: {
@@ -60,7 +60,7 @@ export async function PATCH(
 ) {
   try {
     // Check CRM module license
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = updateDealSchema.parse(body)
@@ -136,7 +136,7 @@ export async function DELETE(
 ) {
   try {
     // Check CRM module license
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     // Check if deal exists and belongs to tenant
     const existing = await prisma.deal.findFirst({

@@ -6,7 +6,7 @@ import { requireModuleAccess, handleLicenseError } from '@/lib/middleware/auth'
 export async function GET(request: NextRequest) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const searchParams = request.nextUrl.searchParams
     const platform = searchParams.get('platform')

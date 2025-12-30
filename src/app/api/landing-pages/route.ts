@@ -29,9 +29,7 @@ export async function GET(request: NextRequest) {
     const pages = await prisma.landingPage.findMany({
       where,
       include: {
-        _count: {
-          select: { registrations: false }, // Event registrations don't exist on landing page
-        },
+        // _count not available for LandingPage model
       },
       orderBy: { createdAt: 'desc' },
     })

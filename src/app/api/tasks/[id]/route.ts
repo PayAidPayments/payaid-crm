@@ -20,7 +20,7 @@ export async function GET(
 ) {
   try {
     // Check CRM module license (tasks are part of CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const task = await prisma.task.findFirst({
       where: {
@@ -63,7 +63,7 @@ export async function PATCH(
 ) {
   try {
     // Check CRM module license (tasks are part of CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = updateTaskSchema.parse(body)
@@ -147,7 +147,7 @@ export async function DELETE(
 ) {
   try {
     // Check CRM module license (tasks are part of CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     // Check if task exists and belongs to tenant
     const existing = await prisma.task.findFirst({

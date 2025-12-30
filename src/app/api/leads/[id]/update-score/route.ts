@@ -13,7 +13,7 @@ export async function PUT(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const contactId = params.id
 

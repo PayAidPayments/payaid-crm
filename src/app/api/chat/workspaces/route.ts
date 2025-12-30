@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get or create workspace for tenant
-    let workspace = await prisma.chatWorkspace.findUnique({
+    let workspace: Awaited<ReturnType<typeof prisma.chatWorkspace.findUnique>> = await prisma.chatWorkspace.findUnique({
       where: { tenantId: tenantId },
       include: {
         channels: {
@@ -38,11 +38,6 @@ export async function GET(request: NextRequest) {
                     },
                   },
                 },
-              },
-            },
-            _count: {
-              select: {
-                messages: true,
               },
             },
           },
@@ -77,8 +72,38 @@ export async function GET(request: NextRequest) {
           description: 'Team communication workspace',
         },
         include: {
-          channels: true,
-          members: true,
+          channels: {
+            include: {
+              members: {
+                include: {
+                  member: {
+                    include: {
+                      user: {
+                        select: {
+                          id: true,
+                          name: true,
+                          email: true,
+                          avatar: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          members: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  avatar: true,
+                },
+              },
+            },
+          },
         },
       })
 
@@ -92,7 +117,7 @@ export async function GET(request: NextRequest) {
         defaultChannels.map((channel) =>
           prisma.chatChannel.create({
             data: {
-              workspaceId: workspace.id,
+              workspaceId: workspace!.id,
               name: channel.name,
               description: channel.description,
               isPrivate: channel.isPrivate,
@@ -113,8 +138,8 @@ export async function GET(request: NextRequest) {
       })
 
       // Reload with all relations
-      workspace = await prisma.chatWorkspace.findUnique({
-        where: { id: workspace.id },
+      const reloaded = await prisma.chatWorkspace.findUnique({
+        where: { id: workspace!.id },
         include: {
           channels: {
             include: {
@@ -135,14 +160,7 @@ export async function GET(request: NextRequest) {
                 },
               },
             },
-            _count: {
-              select: {
-                messages: true,
-              },
-            },
           },
-          orderBy: { createdAt: 'asc' },
-        },
         members: {
           include: {
             user: {
@@ -155,9 +173,14 @@ export async function GET(request: NextRequest) {
             },
           },
         },
+        },
       })
+      workspace = reloaded
     }
 
+    if (!workspace) {
+      return NextResponse.json({ error: 'Workspace not found' }, { status: 404 })
+    }
     return NextResponse.json({ workspace })
   } catch (error) {
     // Handle license errors

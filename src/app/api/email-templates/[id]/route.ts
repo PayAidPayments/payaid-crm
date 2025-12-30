@@ -21,7 +21,7 @@ export async function GET(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const template = await prisma.emailTemplate.findFirst({
       where: {
@@ -54,7 +54,7 @@ export async function PATCH(
 ) {
   try {
     // Check crm module license
-    const { tenantId, userId } = await requireCRMAccess(request)
+    const { tenantId, userId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = updateEmailTemplateSchema.parse(body)

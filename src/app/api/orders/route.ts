@@ -32,7 +32,7 @@ const createOrderSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Check CRM module license (orders are part of sales/CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const searchParams = request.nextUrl.searchParams
     const page = parseInt(searchParams.get('page') || '1')
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check CRM module license (orders are part of sales/CRM)
-    const { tenantId } = await requireCRMAccess(request)
+    const { tenantId } = await requireModuleAccess(request, 'crm')
 
     const body = await request.json()
     const validated = createOrderSchema.parse(body)
